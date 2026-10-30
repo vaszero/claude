@@ -20,7 +20,7 @@
   const dock = $('#dock');
 
   let hostKey = new URLSearchParams(location.search).get('key') || '';
-  try { hostKey = hostKey || sessionStorage.getItem(KEY_STORE) || ''; } catch (e) { /* 저장소 없음 */ }
+  try { hostKey = hostKey || localStorage.getItem(KEY_STORE) || ''; } catch (e) { /* 저장소 없음 */ }
 
   let socket = null;
   let content = null;
@@ -56,13 +56,19 @@
     if (socket) socket.disconnect();
     socket = io({ auth: { role: 'host', key: hostKey } });
     socket.on('auth:fail', () => {
-      try { sessionStorage.removeItem(KEY_STORE); } catch (e) { /* 무시 */ }
+      try { localStorage.removeItem(KEY_STORE); } catch (e) { /* 무시 */ }
       socket.disconnect();
       askKey('진행자 키가 맞지 않습니다.');
     });
     socket.on('host:config', (c) => {
-      try { sessionStorage.setItem(KEY_STORE, hostKey); } catch (e) { /* 무시 */ }
-      if (new URLSearchParams(location.search).has('key')) history.replaceState(null, '', '/host');
+      try { localStorage.setItem(KEY_STORE, hostKey); } catch (e) { /* 무시 */ }
+      if (new URLSearchParams(location.search).has('key')) history.replaceState(null, '', `/host${location.hash}`);
+      // PPT 링크용: /host#vote 처럼 열면 그 화면으로 바로 이동
+      const jump = location.hash.slice(1);
+      if (jump && PHASES.some(([id]) => id === jump)) {
+        send('host:phase', { phase: jump });
+        history.replaceState(null, '', '/host');
+      }
       content = c.content;
       $('#brand').innerHTML = `${content.logo ? `<img class="logo" src="${esc(content.logo)}" alt="" onerror="this.remove()">` : ''}${esc(content.title)}<small>${esc(content.brand || '')}</small>`;
       setJoinUrl(`${location.origin}/`);
@@ -166,6 +172,14 @@
     if (document.fullscreenElement) document.exitFullscreen();
     else document.documentElement.requestFullscreen?.();
   }
+
+  window.addEventListener('hashchange', () => {
+    const jump = location.hash.slice(1);
+    if (jump && PHASES.some(([id]) => id === jump)) {
+      send('host:phase', { phase: jump });
+      history.replaceState(null, '', '/host');
+    }
+  });
 
   document.addEventListener('keydown', (e) => {
     if (!v || e.target.closest('input, textarea')) return;
