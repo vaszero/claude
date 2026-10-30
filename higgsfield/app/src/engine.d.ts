@@ -16,7 +16,7 @@ export function cleanText(s: unknown, max: number): string;
 export function isPlayer(s: State, pid: string): boolean;
 export function hostView(s: State, online: Set<string>, now: number): unknown;
 export function playerView(s: State, pid: string, now: number): unknown;
-export function nextWake(s: State): number | null;
+export function nextWake(s: State, now: number): number | null;
 export function tick(s: State, now: number): Out[];
 export function onHost(s: State, ev: string, d: unknown, now: number, online: Set<string>): { outs: Out[]; reset?: boolean };
 export function onPlayer(s: State, pid: string, ev: string, d: unknown, now: number): Out[];

@@ -117,9 +117,12 @@ h1, h2, h3, p { margin: 0; }
 
 /* 금지 멘트 잡기 */
 .whack { height: 100%; display: grid; grid-template-columns: 1fr 24rem; gap: 2rem; }
-.board { position: relative; background: linear-gradient(180deg, #e3f3ee, #cfe9e1); border-radius: 28px; padding: 1.4rem; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1rem; min-height: 0; }
-.hole { position: relative; display: flex; align-items: flex-end; justify-content: center; }
-.hole::after { content: ""; position: absolute; bottom: 4%; left: 12%; right: 12%; height: 22%; border-radius: 50%; background: radial-gradient(ellipse at 50% 40%, #31424f 0%, #1f2b35 70%); box-shadow: inset 0 6px 10px rgba(0,0,0,.4); }
+.board { position: relative; border-radius: 30px; padding: 1.4rem 2.2rem 1.8rem; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: .3rem 1.8rem; min-height: 0;
+  background: radial-gradient(ellipse at 50% -10%, #d3f0a8 0%, transparent 60%), linear-gradient(180deg, #9fd571, #5fae45);
+  border: 14px solid #b9824e; box-shadow: inset 0 8px 20px rgba(0, 0, 0, .22), 0 12px 0 #8e5f35, var(--shadow);
+  transform: perspective(1600px) rotateX(10deg); transform-origin: 50% 100%; }
+
+
 .bubble { position: absolute; bottom: 16%; left: 4%; right: 4%; z-index: 2; background: #fff; border-radius: 18px; padding: .9rem .8rem; text-align: center; font-weight: 800; font-size: 1.55rem; line-height: 1.25; letter-spacing: -0.02em; box-shadow: 0 8px 18px -6px rgba(20,33,61,.35); animation: pop .35s ease both; word-break: keep-all; }
 .bubble::after { content: ""; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); border: 10px solid transparent; border-top-color: #fff; border-bottom: 0; }
 .bubble.caught { background: var(--coral); color: #fff; }
@@ -225,3 +228,12 @@ h1, h2, h3, p { margin: 0; }
 .topbar .logo { height: 2rem; width: auto; max-width: 9rem; object-fit: contain; }
 .hero-logo { display: block; max-height: 6rem; max-width: 24rem; object-fit: contain; margin-bottom: 1.2rem; }
 .report-logo { max-height: 3.6rem; max-width: 12rem; object-fit: contain; }
+
+.board .mole-group .sign { font-size: clamp(.95rem, 8.5cqh, 1.75rem); padding: .5em .55em; }
+.board .fx { top: 4%; }
+.board .mole-group .mole { height: 54cqh; }
+.board .mole-group .sign { font-size: clamp(1.05rem, 10.5cqh, 1.9rem); }
+.board .mole-group .mole { height: 48cqh; }
+
+/* 플랫폼 배지(오른쪽 아래 고정) 자리 비우기 */
+#dock { padding-right: 200px; }

@@ -64,7 +64,10 @@
   socket.on('whack:despawn', ({ id }) => {
     pbubbles.delete(id);
     const el = document.getElementById(`pb${id}`);
-    if (el) setTimeout(() => el.remove(), el.classList.contains('hit') ? 350 : 0);
+    if (!el) return;
+    el.id = '';
+    setTimeout(() => el.classList.remove('up'), el.classList.contains('bonked') ? 300 : 0);
+    setTimeout(() => el.remove(), 650);
   });
   socket.on('whack:hitres', (r) => {
     myScore += r.pts;
@@ -72,11 +75,13 @@
     if (sc) sc.textContent = myScore;
     const el = document.getElementById(`pb${r.id}`);
     if (!el) return;
-    el.classList.add(r.bad ? 'badok' : 'good');
+    const sign = el.querySelector('.sign');
+    if (r.bad) { el.classList.add('bonked'); sign.classList.add('ok'); }
+    else { sign.classList.add('caught', 'wrong'); }
     const fx = document.createElement('div');
     fx.className = `pfx ${r.pts > 0 ? 'plus' : 'minus'}`;
     fx.textContent = r.pts > 0 ? `+${r.pts}${r.first ? ' 첫 캐치!' : ''}` : `${r.pts} 좋은 멘트예요!`;
-    el.parentNode.appendChild(fx);
+    el.closest('.hole').appendChild(fx);
     setTimeout(() => fx.remove(), 800);
     if (!r.bad && navigator.vibrate) navigator.vibrate([40, 40, 40]);
   });
@@ -282,16 +287,32 @@
     }
   }
 
+  // 두더지 그림 (직접 그린 SVG)
+  const MOLE_SVG = `<svg class="mole" viewBox="0 0 120 112" aria-hidden="true">
+    <ellipse cx="24" cy="38" rx="9" ry="8" fill="#6e4429"/><ellipse cx="96" cy="38" rx="9" ry="8" fill="#6e4429"/>
+    <path d="M8 112 V62 a52 52 0 0 1 104 0 V112 Z" fill="#8a5a3c"/>
+    <path d="M30 112 V80 a30 30 0 0 1 60 0 V112 Z" fill="#d9ab84"/>
+    <g class="eyes-open"><circle cx="42" cy="52" r="7.5" fill="#1d1d1f"/><circle cx="78" cy="52" r="7.5" fill="#1d1d1f"/>
+      <circle cx="44.5" cy="49.5" r="2.4" fill="#fff"/><circle cx="80.5" cy="49.5" r="2.4" fill="#fff"/></g>
+    <g class="eyes-x" stroke="#1d1d1f" stroke-width="4" stroke-linecap="round"><path d="M35 45 l14 14 M49 45 l-14 14"/><path d="M71 45 l14 14 M85 45 l-14 14"/></g>
+    <circle cx="30" cy="66" r="6" fill="#f2a0a0" opacity=".7"/><circle cx="90" cy="66" r="6" fill="#f2a0a0" opacity=".7"/>
+    <ellipse cx="60" cy="68" rx="15" ry="11" fill="#f0c9a8"/><ellipse cx="60" cy="63" rx="7" ry="5" fill="#d9566a"/>
+    <rect x="54" y="74" width="5.5" height="7" rx="1.5" fill="#fff"/><rect x="60.5" y="74" width="5.5" height="7" rx="1.5" fill="#fff"/>
+  </svg>`;
+  const HOLE_HTML = '<div class="mound"></div><div class="pit"></div><div class="clip"></div><div class="rim"></div>';
+
   function drawBubble(b) {
     const cell = app.querySelector(`.cell[data-slot="${b.slot}"]`);
     if (!cell || document.getElementById(`pb${b.id}`)) return;
-    cell.querySelectorAll('.pb').forEach((x) => x.remove());
-    const el = document.createElement('button');
-    el.className = `pb${b.hit ? ' hit' : ''}`;
+    const el = document.createElement('div');
+    el.className = `mole-group${b.hit ? ' hit' : ''}`;
     el.id = `pb${b.id}`;
     el.dataset.id = b.id;
-    el.textContent = b.text;
-    cell.appendChild(el);
+    el.innerHTML = `<div class="sign"></div>${MOLE_SVG}`;
+    el.querySelector('.sign').textContent = b.text;
+    cell.querySelector('.clip').appendChild(el);
+    void el.offsetWidth;
+    el.classList.add('up');
   }
 
   P.whack = {
@@ -304,7 +325,7 @@
       if (w.status === 'running') {
         return `
           <div class="whack-top"><span><span class="score" data-b="score">${myScore}</span> 점</span><span class="ptimer" data-ends="${w.endsAt}"></span></div>
-          <div class="pgrid">${[...Array(9).keys()].map((i) => `<div class="cell" data-slot="${i}"></div>`).join('')}</div>
+          <div class="pgrid">${[...Array(9).keys()].map((i) => `<div class="cell hole" data-slot="${i}">${HOLE_HTML}</div>`).join('')}</div>
           <p class="sub" style="text-align:center;margin-top:.7rem">금지 멘트만 터치!</p>`;
       }
       return `<div class="center">
@@ -325,10 +346,17 @@
   };
 
   app.addEventListener('pointerdown', (e) => {
-    const el = e.target.closest('.pb');
-    if (!el || el.classList.contains('hit')) return;
+    const cell = e.target.closest('.cell');
+    const el = cell && cell.querySelector('.mole-group.up[id]:not(.hit)');
+    if (!el) return;
     e.preventDefault();
     el.classList.add('hit');
+    const hammer = document.createElement('div');
+    hammer.className = 'hammer';
+    hammer.textContent = '🔨';
+    cell.appendChild(hammer);
+    setTimeout(() => hammer.remove(), 450);
+    if (navigator.vibrate) navigator.vibrate(15);
     const b = pbubbles.get(+el.dataset.id);
     if (b) b.hit = true;
     send('whack:hit', { id: +el.dataset.id });

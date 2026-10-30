@@ -195,7 +195,8 @@ export function hostView(S, online, now) {
     now,
     phase: S.phase,
     total: players.length,
-    online: Object.keys(S.players).filter((pid) => online.has(pid)).length,
+    online: Object.keys(S.players).filter((pid) => online.has(pid) || isBot(pid)).length,
+    demo: botIds(S).length,
     deptCounts: C.departments.map((d) => ({ dept: d, count: players.filter((p) => p.dept === d).length })),
     recent: players.slice(-40).map((p) => ({ name: p.name, dept: p.dept })),
     quiz: { mode: S.quiz.mode, open: S.quiz.open, stats: quizStats(S) },
@@ -318,7 +319,7 @@ function whackStart(S, now, online) {
   w.startedAt = now;
   w.endsAt = now + C.settings.whackSeconds * 1000;
   w.nextSpawnAt = now + 900;
-  for (const pid of online) if (S.players[pid]) w.scores[pid] = 0;
+  for (const pid of [...online, ...botIds(S)]) if (S.players[pid]) w.scores[pid] = 0;
   w.participants = Object.keys(w.scores).length;
   return outs;
 }
@@ -371,11 +372,82 @@ function whackHit(S, pid, id, now, outs) {
   outs.push({ to: "self", ev: "whack:hitres", d: { id: b.id, pts, bad: b.bad, first } });
 }
 
+// ───────────────────────── 체험용 가상 참가자 ─────────────────────────
+// 강사가 혼자서도 전체 흐름을 볼 수 있도록, 방 안에서 자동으로 응답하는 참가자.
+
+const BOT_NAMES = ["김간호", "접수천사", "이치료", "박원무", "최방사", "정실장", "한수납", "윤코디", "강주임", "조선생", "오간호", "서치료"];
+const isBot = (pid) => pid.startsWith("demo-");
+const botIds = (S) => Object.keys(S.players).filter(isBot);
+
+function addBots(S, now) {
+  const depts = C.departments.slice(0, Math.min(4, C.departments.length));
+  BOT_NAMES.forEach((name, i) => {
+    const pid = `demo-${i}`;
+    if (!S.players[pid]) S.players[pid] = { name, dept: depts[i % depts.length], joinedAt: now + i };
+    if (S.whack.status === "running" && !(pid in S.whack.scores)) S.whack.scores[pid] = 0;
+  });
+  S.whack.participants = Object.keys(S.whack.scores).length;
+}
+
+function removeBots(S) {
+  for (const pid of botIds(S)) {
+    delete S.players[pid];
+    delete S.quiz.answers.pre[pid];
+    delete S.quiz.answers.post[pid];
+    for (const v of S.vote.votes) delete v[pid];
+    for (const a of S.ox.answers) delete a[pid];
+    delete S.whack.scores[pid];
+  }
+  S.cloud.entries = S.cloud.entries.map((list) => list.filter((e) => !isBot(e.pid)));
+  S.whack.participants = Object.keys(S.whack.scores).length;
+}
+
+function botWaiting(S, pid, now) {
+  if (S.phase === "quiz" && S.quiz.open && S.quiz.mode) return !S.quiz.answers[S.quiz.mode][pid];
+  if (S.phase === "vote" && S.vote.stage === "question") return !(pid in S.vote.votes[S.vote.index]);
+  if (S.phase === "ox" && S.ox.stage === "question" && now < S.ox.endsAt) return !S.ox.answers[S.ox.index][pid];
+  if (S.phase === "cloud" && (C.demoCloud || [])[S.cloud.index]?.length) {
+    return !S.cloud.entries[S.cloud.index].some((e) => e.pid === pid);
+  }
+  return false;
+}
+
+function botStep(S, now) {
+  const outs = [];
+  const r = Math.random;
+  for (const pid of botIds(S)) {
+    const skill = 0.5 + (Number(pid.slice(5)) % 4) * 0.08;
+    if (botWaiting(S, pid, now) && r() < 0.22) {
+      if (S.phase === "quiz") {
+        const boost = S.quiz.mode === "post" ? 0.3 : 0;
+        S.quiz.answers[S.quiz.mode][pid] = C.quiz.map((q) => (r() < skill + boost ? q.answer : Math.floor(r() * q.options.length)));
+      } else if (S.phase === "vote") {
+        const sc = C.scenarios[S.vote.index];
+        S.vote.votes[S.vote.index][pid] = r() < 0.55 ? sc.best : Math.floor(r() * sc.options.length);
+      } else if (S.phase === "ox") {
+        const a = C.ox[S.ox.index].answer;
+        S.ox.answers[S.ox.index][pid] = r() < skill + 0.2 ? a : a === "O" ? "X" : "O";
+      } else if (S.phase === "cloud") {
+        const pool = C.demoCloud[S.cloud.index];
+        S.cloud.entries[S.cloud.index].push({ pid, text: pool[Math.floor(r() * pool.length)], at: now });
+      }
+    }
+    if (S.whack.status === "running") {
+      for (const b of vals(S.whack.bubbles)) {
+        if (b.hits.includes(pid) || now - b.born < 400) continue;
+        if (r() < (b.bad ? 0.06 : 0.006)) whackHit(S, pid, b.id, now, outs);
+      }
+    }
+  }
+  return outs.filter((o) => o.to !== "self");
+}
+
 // ───────────────────────── 시간 ─────────────────────────
 
 /** 다음에 깨어나야 할 시각(ms). 없으면 null. */
-export function nextWake(S) {
+export function nextWake(S, now) {
   const t = [];
+  if (botIds(S).some((pid) => botWaiting(S, pid, now))) t.push(now + 500);
   const w = S.whack;
   if (w.status === "running") {
     t.push(w.endsAt, w.nextSpawnAt);
@@ -404,6 +476,7 @@ export function tick(S, now) {
     }
   }
   if (S.ox.stage === "question" && S.ox.endsAt && now >= S.ox.endsAt + 300) S.ox.stage = "locked";
+  outs.push(...botStep(S, now));
   return outs;
 }
 
@@ -476,6 +549,12 @@ export function onHost(S, ev, d, now, online) {
     }
     case "cloud:unhide":
       S.cloud.hidden[S.cloud.index] = [];
+      break;
+    case "demo:add":
+      addBots(S, now);
+      break;
+    case "demo:remove":
+      removeBots(S);
       break;
     case "host:export":
       outs.push({ to: "self", ev: "host:exportData", d: exportBoth(S, now) });

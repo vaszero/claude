@@ -41,3 +41,35 @@ input { font: inherit; }
 @keyframes rise { from { transform: translateY(0); opacity: 1 } to { transform: translateY(-60px); opacity: 0 } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
 @media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
+/* ───────── 두더지 게임판 (강사·참가자 공통) ───────── */
+.hole { position: relative; container-type: size; }
+.hole .mound { position: absolute; left: 3%; right: 3%; bottom: 1%; height: 34%; border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 30%, #b0835a 0%, #7c5131 72%); box-shadow: 0 5px 0 rgba(0, 0, 0, .14); }
+.hole .pit { position: absolute; left: 14%; right: 14%; bottom: 9%; height: 22%; border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 72%, #2d1c11 0%, #110a05 78%); }
+.hole .clip { position: absolute; left: 0; right: 0; top: 0; bottom: 20%; overflow: hidden; z-index: 1; }
+.hole .rim { position: absolute; left: 14%; right: 14%; bottom: 9%; height: 11%; z-index: 2;
+  border-radius: 0 0 50% 50% / 0 0 100% 100%; background: linear-gradient(180deg, #92603a, #6a4226); }
+.mole-group { position: absolute; left: 3%; right: 3%; bottom: 0; display: flex; flex-direction: column; align-items: center;
+  transform: translateY(110%); transition: transform .28s cubic-bezier(.25, 1.45, .5, 1); }
+.mole-group.up { transform: translateY(6%); }
+.mole-group .mole { display: block; height: 44cqh; width: auto; transform-origin: 50% 100%; transition: transform .15s; }
+.mole .eyes-x { display: none; }
+.mole-group.bonked .mole { transform: scale(1.08, .82); }
+.mole-group.bonked .eyes-open { display: none; }
+.mole-group.bonked .eyes-x { display: inline; }
+.mole-group .sign { position: relative; width: 100%; margin-bottom: 1.5cqh; background: #fff; border-radius: 14px; text-align: center;
+  font-weight: 800; line-height: 1.22; letter-spacing: -0.02em; word-break: keep-all; box-shadow: 0 6px 14px -6px rgba(20, 33, 61, .45); }
+.mole-group .sign::after { content: ""; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+  border: 8px solid transparent; border-top-color: #fff; border-bottom: 0; }
+.mole-group .sign.caught { background: var(--coral); color: #fff; }
+.mole-group .sign.caught::after { border-top-color: var(--coral); }
+.mole-group .sign.ok { background: var(--teal); color: #fff; }
+.mole-group .sign.ok::after { border-top-color: var(--teal); }
+.mole-group .sign.wrong { animation: shake .4s; outline: 4px solid var(--coral); }
+.mole-group .sign .who { display: block; font-size: .7em; margin-top: .15em; }
+.hammer { position: absolute; z-index: 4; right: 4%; top: 6%; font-size: 30cqh; line-height: 1; pointer-events: none;
+  transform-origin: 85% 85%; animation: whack .4s ease-out forwards; }
+.stars { position: absolute; z-index: 4; left: 0; right: 0; top: 26%; text-align: center; font-size: 15cqh; pointer-events: none; animation: rise .9s ease forwards; }
+@keyframes whack { 0% { transform: rotate(50deg); opacity: 1 } 45% { transform: rotate(-25deg) } 100% { transform: rotate(-20deg); opacity: 0 } }

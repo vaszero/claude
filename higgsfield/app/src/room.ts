@@ -62,9 +62,10 @@ export class Room extends DurableObject<Env> {
 
   private async save(): Promise<void> {
     await this.ctx.storage.put("s", this.state);
-    const at = engine.nextWake(this.state);
+    const now = Date.now();
+    const at = engine.nextWake(this.state, now);
     if (at === null) await this.ctx.storage.deleteAlarm();
-    else await this.ctx.storage.setAlarm(Math.max(at, Date.now() + 5));
+    else await this.ctx.storage.setAlarm(Math.max(at, now + 5));
   }
 
   // ── 소켓 ──────────────────────────────────────────────────────────────

@@ -110,7 +110,7 @@
     if (!content || !v) return;
     const ph = P[v.phase];
     $('#phaseName').textContent = PHASE_LABEL[v.phase];
-    $('#countText').textContent = `${v.online}명 접속`;
+    $('#countText').textContent = v.demo ? `${v.online}명 접속 (가상 ${v.demo}명)` : `${v.online}명 접속`;
     $('#miniQr').classList.toggle('hidden', v.phase === 'lobby' || v.phase === 'report');
     const k = `${v.phase}|${ph.key(v)}`;
     if (k !== stageKey) {
@@ -232,6 +232,11 @@
         names.innerHTML = v.recent.map((p) => `<span>${esc(p.name)}</span>`).join('');
       }
     },
+    controls: (v) => [
+      v.demo
+        ? { label: `가상 참가자 빼기 (${v.demo}명)`, act: () => send('demo:remove') }
+        : { label: '혼자 체험: 가상 참가자 12명 넣기', act: () => send('demo:add'), primary: true },
+    ],
   };
 
   // 2. 사전·사후 퀴즈
@@ -365,40 +370,66 @@
   };
 
   // 4. 금지 멘트 잡기
+  // 두더지 그림 (직접 그린 SVG)
+  const MOLE_SVG = `<svg class="mole" viewBox="0 0 120 112" aria-hidden="true">
+    <ellipse cx="24" cy="38" rx="9" ry="8" fill="#6e4429"/><ellipse cx="96" cy="38" rx="9" ry="8" fill="#6e4429"/>
+    <path d="M8 112 V62 a52 52 0 0 1 104 0 V112 Z" fill="#8a5a3c"/>
+    <path d="M30 112 V80 a30 30 0 0 1 60 0 V112 Z" fill="#d9ab84"/>
+    <g class="eyes-open"><circle cx="42" cy="52" r="7.5" fill="#1d1d1f"/><circle cx="78" cy="52" r="7.5" fill="#1d1d1f"/>
+      <circle cx="44.5" cy="49.5" r="2.4" fill="#fff"/><circle cx="80.5" cy="49.5" r="2.4" fill="#fff"/></g>
+    <g class="eyes-x" stroke="#1d1d1f" stroke-width="4" stroke-linecap="round"><path d="M35 45 l14 14 M49 45 l-14 14"/><path d="M71 45 l14 14 M85 45 l-14 14"/></g>
+    <circle cx="30" cy="66" r="6" fill="#f2a0a0" opacity=".7"/><circle cx="90" cy="66" r="6" fill="#f2a0a0" opacity=".7"/>
+    <ellipse cx="60" cy="68" rx="15" ry="11" fill="#f0c9a8"/><ellipse cx="60" cy="63" rx="7" ry="5" fill="#d9566a"/>
+    <rect x="54" y="74" width="5.5" height="7" rx="1.5" fill="#fff"/><rect x="60.5" y="74" width="5.5" height="7" rx="1.5" fill="#fff"/>
+  </svg>`;
+  const HOLE_HTML = '<div class="mound"></div><div class="pit"></div><div class="clip"></div><div class="rim"></div>';
+
   function drawBubble(b) {
     const hole = stage.querySelector(`.hole[data-slot="${b.slot}"]`);
     if (!hole || document.getElementById(`b${b.id}`)) return;
     const el = document.createElement('div');
-    el.className = 'bubble';
+    el.className = 'mole-group';
     el.id = `b${b.id}`;
-    el.textContent = b.text;
-    hole.appendChild(el);
+    el.innerHTML = `<div class="sign"></div>${MOLE_SVG}`;
+    el.querySelector('.sign').textContent = b.text;
+    hole.querySelector('.clip').appendChild(el);
+    void el.offsetWidth;
+    el.classList.add('up');
   }
   function removeBubble(id) {
     bubbles.delete(id);
     const el = document.getElementById(`b${id}`);
     if (!el) return;
-    el.classList.add('gone');
-    setTimeout(() => el.remove(), 260);
+    el.id = '';
+    setTimeout(() => el.classList.remove('up'), el.classList.contains('bonked') ? 350 : 0);
+    setTimeout(() => el.remove(), 700);
   }
   function hitFx(fx) {
     const el = document.getElementById(`b${fx.id}`);
     if (!el) return;
+    const hole = el.closest('.hole');
+    const sign = el.querySelector('.sign');
+    const add = (cls, text, ms) => {
+      const f = document.createElement('div');
+      f.className = cls;
+      f.textContent = text;
+      hole.appendChild(f);
+      setTimeout(() => f.remove(), ms);
+    };
     if (fx.bad && fx.first) {
-      el.classList.add('caught');
+      el.classList.add('bonked');
+      sign.classList.add('caught');
       const who = document.createElement('span');
       who.className = 'who';
       who.textContent = `${fx.name} 캐치!`;
-      el.appendChild(who);
+      sign.appendChild(who);
+      add('hammer', '🔨', 450);
+      add('stars', '💫', 900);
     } else if (!fx.bad) {
-      el.classList.remove('wrong');
-      void el.offsetWidth;
-      el.classList.add('wrong');
-      const f = document.createElement('div');
-      f.className = 'fx';
-      f.textContent = `앗! ${fx.name} -50`;
-      el.parentNode.appendChild(f);
-      setTimeout(() => f.remove(), 900);
+      sign.classList.remove('wrong');
+      void sign.offsetWidth;
+      sign.classList.add('wrong');
+      add('fx', `앗! ${fx.name} -50`, 900);
     }
   }
 
@@ -427,7 +458,7 @@
       }
       if (w.status === 'running') {
         return `<div class="whack">
-          <div class="board">${[...Array(9).keys()].map((i) => `<div class="hole" data-slot="${i}"></div>`).join('')}</div>
+          <div class="board">${[...Array(9).keys()].map((i) => `<div class="hole" data-slot="${i}">${HOLE_HTML}</div>`).join('')}</div>
           <div class="side">
             <div class="timer-big" data-ends="${w.endsAt}"></div>
             <div class="timer-bar" data-ends="${w.endsAt}" data-dur="${content.settings.whackSeconds * 1000}" data-kind="bar"><i></i></div>
