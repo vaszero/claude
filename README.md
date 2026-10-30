@@ -91,7 +91,15 @@ HOST_KEY=원하는비밀번호 npm start
 - `cloudPrompts` : 워드클라우드 질문
 - `settings` : 금지 멘트 게임 시간(초), OX 제한 시간(초), 워드클라우드 1인당 응답 수
 
+### 병원별 콘텐츠
+
+| 파일 | 대상 |
+|---|---|
+| `content/hospital-cs.json` | 병·의원 공통 기본 세트 |
+| `content/yonsei-ildeung-siheung.json` | 연세일등정형외과의원(시흥) — 물리치료실 대기, 실손보험 문의, 주사 후 전화, X-ray 재촬영 사례 포함 |
+
 병원별로 파일을 따로 만들어 두고 `CONTENT_FILE=content/○○병원.json npm start` 처럼 골라서 쓸 수도 있습니다.
+Render에서는 환경변수 `CONTENT_FILE`에 `content/yonsei-ildeung-siheung.json`을 넣으면 됩니다.
 파일 형식이 틀리면 서버가 켜질 때 어느 문항이 잘못됐는지 알려 줍니다.
 
 ## 5. 강의 전 리허설
