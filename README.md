@@ -1,5 +1,8 @@
 # 병원 CS 플레이
 
+> **연세일등정형외과 강의용 공개 주소**: https://ildeung-cs-play.higgsfield.app (참가자) · https://ildeung-cs-play.higgsfield.app/host (강사, 진행자 키 필요)  
+> Higgsfield 배포판 코드는 `higgsfield/app/` 에 있습니다.
+
 병원 CS 강의용 **QR 참여형 실시간 교육 게임**입니다.
 큰 화면(프로젝터)에 QR을 띄우면 직원들이 앱 설치 없이 휴대폰으로 입장하고, 휴대폰이 컨트롤러가 됩니다.
 
