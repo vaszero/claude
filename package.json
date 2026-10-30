@@ -1,0 +1,22 @@
+{
+  "name": "cs-play",
+  "version": "1.0.0",
+  "private": true,
+  "description": "병원 CS 강의용 QR 참여형 실시간 교육 게임",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "simulate": "node scripts/simulate.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "socket.io-client": "^4.8.1"
+  }
+}

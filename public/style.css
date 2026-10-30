@@ -1,0 +1,43 @@
+:root {
+  --bg: #f4f1ea;
+  --card: #ffffff;
+  --ink: #1b2a41;
+  --muted: #5b6779;
+  --line: #e2ddd2;
+  --teal: #0e8c7f;
+  --teal-deep: #0a6b61;
+  --teal-soft: #d7efea;
+  --coral: #e4572e;
+  --coral-soft: #fbe1d8;
+  --amber: #f2a541;
+  --amber-soft: #fdf0d9;
+  --navy: #14213d;
+  --radius: 18px;
+  --shadow: 0 2px 0 rgba(27, 42, 65, 0.06), 0 10px 30px -12px rgba(27, 42, 65, 0.18);
+  font-family: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-text-size-adjust: 100%;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: var(--bg); }
+body { min-height: 100vh; min-height: 100dvh; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+input { font: inherit; }
+.hidden { display: none !important; }
+.muted { color: var(--muted); }
+.tag {
+  display: inline-block; padding: 0.25em 0.75em; border-radius: 999px;
+  background: var(--teal-soft); color: var(--teal-deep); font-weight: 700; font-size: 0.85em;
+}
+.tag.coral { background: var(--coral-soft); color: var(--coral); }
+.tag.amber { background: var(--amber-soft); color: #9a5d00; }
+.card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); }
+.dot { width: 10px; height: 10px; border-radius: 50%; background: var(--teal); display: inline-block; }
+.off .dot, .dot.off { background: var(--coral); }
+
+@keyframes pop { 0% { transform: translateY(40%) scale(.6); opacity: 0 } 70% { transform: translateY(-4%) scale(1.04); opacity: 1 } 100% { transform: none; opacity: 1 } }
+@keyframes shake { 0%,100% { transform: translateX(0) } 20%,60% { transform: translateX(-8px) } 40%,80% { transform: translateX(8px) } }
+@keyframes rise { from { transform: translateY(0); opacity: 1 } to { transform: translateY(-60px); opacity: 0 } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
+@media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }

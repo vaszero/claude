@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: cs-play
+    runtime: node
+    plan: free
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: HOST_KEY
+        sync: false

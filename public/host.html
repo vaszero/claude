@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>강사 화면 · 병원 CS 플레이</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/host.css">
+</head>
+<body class="host">
+  <header class="topbar">
+    <div class="brand" id="brand">병원 CS 플레이</div>
+    <div class="phase-name" id="phaseName"></div>
+    <div class="mini-qr hidden" id="miniQr"><img alt="입장 QR"><span></span></div>
+    <div class="count" id="conn"><span class="dot"></span><span id="countText">0명</span></div>
+  </header>
+  <main id="stage"></main>
+  <nav id="dock"></nav>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/host.js"></script>
+</body>
+</html>
