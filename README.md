@@ -42,6 +42,10 @@ HOST_KEY=원하는비밀번호 npm start
 
 ## 2. 인터넷에 올려서 쓰기 (추천: 어느 병원이든 데이터로 접속 가능)
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/vaszero/claude)
+
+위 버튼을 누르면 아래 1~2번이 한 번에 진행됩니다. (기본 콘텐츠는 연세일등정형외과 세트이며, Render 환경변수 `CONTENT_FILE`에서 바꿀 수 있습니다.)
+
 [Render](https://render.com) 무료 플랜 기준입니다.
 
 1. Render 가입 → **New → Blueprint** → 이 GitHub 저장소 선택
@@ -101,6 +105,14 @@ HOST_KEY=원하는비밀번호 npm start
 병원별로 파일을 따로 만들어 두고 `CONTENT_FILE=content/○○병원.json npm start` 처럼 골라서 쓸 수도 있습니다.
 Render에서는 환경변수 `CONTENT_FILE`에 `content/yonsei-ildeung-siheung.json`을 넣으면 됩니다.
 파일 형식이 틀리면 서버가 켜질 때 어느 문항이 잘못됐는지 알려 줍니다.
+
+### 병원 로고 넣기
+
+1. 로고 이미지(PNG, 배경 투명 권장)를 `public/logos/` 폴더에 넣습니다. 예: `public/logos/yonsei-ildeung.png`
+2. 콘텐츠 파일의 `"logo"` 값을 `"/logos/파일이름.png"` 로 맞춥니다.
+
+로고는 강사 화면 상단, 입장 화면, 결과 리포트, 참가자 휴대폰 상단에 표시됩니다. 파일이 없으면 로고 자리만 비고 나머지는 그대로 동작합니다.
+병원 로고는 해당 병원의 동의를 받은 강의에서만 사용하세요.
 
 ## 5. 강의 전 리허설
 

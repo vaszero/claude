@@ -64,7 +64,7 @@
       try { sessionStorage.setItem(KEY_STORE, hostKey); } catch (e) { /* 무시 */ }
       if (new URLSearchParams(location.search).has('key')) history.replaceState(null, '', '/host');
       content = c.content;
-      $('#brand').innerHTML = `${esc(content.title)}<small>${esc(content.brand || '')}</small>`;
+      $('#brand').innerHTML = `${content.logo ? `<img class="logo" src="${esc(content.logo)}" alt="" onerror="this.remove()">` : ''}${esc(content.title)}<small>${esc(content.brand || '')}</small>`;
       setJoinUrl(c.joinUrl);
       stageKey = dockKey = '';
       render();
@@ -197,6 +197,7 @@
     html: () => `
       <div class="lobby">
         <div>
+          ${content.logo ? `<img class="hero-logo" src="${esc(content.logo)}" alt="" onerror="this.remove()">` : ''}
           <p class="eyebrow">${esc(content.brand || '')}</p>
           <h1 class="hero">${esc(content.title)}</h1>
           <p class="lead">휴대폰 카메라로 QR을 찍어 입장하세요.<br>앱 설치 없이 바로 참여할 수 있어요.</p>
@@ -608,7 +609,7 @@
       const medal = ['🥇', '🥈', '🥉'];
       $('[data-b=report]', stage).innerHTML = `
         <div class="card span12" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
-          <div><p class="eyebrow">${esc(content.brand || '')} · ${date}</p><h2 style="font-size:2rem;margin-top:.2rem">${esc(content.title)} 교육 결과</h2></div>
+          <div style="display:flex;align-items:center;gap:1.2rem">${content.logo ? `<img class="report-logo" src="${esc(content.logo)}" alt="" onerror="this.remove()">` : ''}<div><p class="eyebrow">${esc(content.brand || '')} · ${date}</p><h2 style="font-size:2rem;margin-top:.2rem">${esc(content.title)} 교육 결과</h2></div></div>
           <div class="chips">${v.deptCounts.filter((d) => d.count).map((d) => `<span>${esc(d.dept)}<b>${d.count}</b></span>`).join('')}</div>
         </div>
         <div class="card span12"><div class="kpis" style="justify-content:space-around">

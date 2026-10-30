@@ -1,6 +1,7 @@
 {
   "title": "병원 CS 플레이",
   "brand": "VASZERO Consulting",
+  "logo": "",
   "departments": ["원무·접수", "간호", "물리치료", "진료지원", "기타"],
   "settings": {
     "whackSeconds": 60,

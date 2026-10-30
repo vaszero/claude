@@ -9,3 +9,5 @@ services:
     envVars:
       - key: HOST_KEY
         sync: false
+      - key: CONTENT_FILE
+        value: content/yonsei-ildeung-siheung.json

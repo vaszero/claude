@@ -31,6 +31,14 @@
   socket.on('config', (c) => {
     content = c;
     $('#ptitle').textContent = c.title;
+    if (c.logo && !$('.plogo')) {
+      const img = document.createElement('img');
+      img.className = 'plogo';
+      img.src = c.logo;
+      img.alt = '';
+      img.onerror = () => img.remove();
+      $('.pbar').prepend(img);
+    }
     document.title = c.title;
     if (needJoin) showJoin();
   });

@@ -78,3 +78,4 @@ h1, h2, h3, p { margin: 0; }
 .toast { position: fixed; left: 50%; bottom: calc(1.2rem + env(safe-area-inset-bottom)); transform: translateX(-50%); background: var(--navy); color: #fff; padding: .7rem 1.1rem; border-radius: 12px; font-weight: 600; z-index: 20; max-width: 90vw; text-align: center; animation: fadeIn .2s both; }
 
 [data-b=cform] .primary { white-space: nowrap; flex: none; }
+.plogo { height: 26px; width: auto; max-width: 90px; object-fit: contain; }

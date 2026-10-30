@@ -52,6 +52,7 @@ function publicContent() {
   return {
     title: content.title,
     brand: content.brand,
+    logo: content.logo || '',
     departments: content.departments,
     settings: content.settings,
     quiz: content.quiz.map((q) => ({ question: q.question, options: q.options })),
