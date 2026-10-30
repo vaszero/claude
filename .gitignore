@@ -3,3 +3,4 @@ data/
 .env
 higgsfield/app/src/host-key.ts
 qr/cs-play-qr.png
+lecture/
