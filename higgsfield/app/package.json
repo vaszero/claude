@@ -1,0 +1,16 @@
+{
+  "name": "higgsfield-game",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun run check:logic && tsc --noEmit && bun run scripts/build.mjs",
+    "dev": "wrangler dev",
+    "typecheck": "tsc --noEmit",
+    "check:logic": "bun run scripts/check-logic.mjs"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20260804.1",
+    "typescript": "7.0.2",
+    "wrangler": "4.118.0"
+  }
+}

@@ -1,3 +1,4 @@
 node_modules/
 data/
 .env
+higgsfield/app/src/host-key.ts

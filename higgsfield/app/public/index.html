@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f1ea">
+  <title>CS 플레이</title>
+  <meta property="og:title" content="CS 플레이 — 연세일등정형외과">
+  <meta property="og:description" content="QR로 입장하는 병원 CS 교육 게임">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/player.css">
+</head>
+<body class="player">
+  <header class="pbar">
+    <span class="ptitle" id="ptitle">병원 CS 플레이</span>
+    <span class="me" id="me"></span>
+    <span class="dot" id="pconn"></span>
+  </header>
+  <main id="app"><div class="center"><p class="muted">연결 중…</p></div></main>
+  <div id="toast" class="toast hidden"></div>
+  <script src="/ws-client.js"></script>
+  <script src="/player.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  // 로컬 테스트용. 실제 배포 설정은 플랫폼이 app.manifest.json 으로 만든다.
+  "name": "ildeung-cs-play-local",
+  "main": "src/worker.ts",
+  "compatibility_date": "2025-05-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": { "directory": "./public", "binding": "ASSETS", "not_found_handling": "none" },
+  "durable_objects": { "bindings": [{ "name": "ROOMS", "class_name": "Room" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Room"] }]
+}
