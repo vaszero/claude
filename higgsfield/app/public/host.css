@@ -237,3 +237,14 @@ h1, h2, h3, p { margin: 0; }
 
 /* 플랫폼 배지(오른쪽 아래 고정) 자리 비우기 */
 #dock { padding-right: 200px; }
+
+/* 작은 QR 크게 보기 */
+.topbar .mini-qr { cursor: pointer; border-radius: 10px; padding: .2rem .4rem; }
+.topbar .mini-qr:hover { background: var(--teal-soft); }
+.topbar .mini-qr img { width: 4.6rem; height: 4.6rem; }
+.big-qr { position: fixed; inset: 0; z-index: 50; background: rgba(20, 33, 61, .55); display: grid; place-items: center; cursor: pointer; animation: fadeIn .2s both; }
+.big-qr-card { background: #fff; border-radius: 28px; padding: 2.2rem 2.6rem; text-align: center; box-shadow: var(--shadow); }
+.big-qr-card p { font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem; }
+.big-qr-card img { width: min(68vh, 34rem); height: auto; aspect-ratio: 1; display: block; margin: 0 auto; }
+.big-qr-card .url { font-size: 1.4rem; font-weight: 700; margin-top: .8rem; }
+.big-qr-card small { display: block; color: var(--muted); margin-top: .4rem; }

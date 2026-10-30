@@ -13,10 +13,11 @@
   <header class="topbar">
     <div class="brand" id="brand">병원 CS 플레이</div>
     <div class="phase-name" id="phaseName"></div>
-    <div class="mini-qr hidden" id="miniQr"><img alt="입장 QR"><span></span></div>
+    <div class="mini-qr hidden" id="miniQr" title="클릭하면 크게 보기 (Q)"><img alt="입장 QR"><span></span></div>
     <div class="count" id="conn"><span class="dot"></span><span id="countText">0명</span></div>
   </header>
   <main id="stage"></main>
+  <div id="bigQr" class="big-qr hidden" title="클릭하면 닫힙니다"><div class="big-qr-card"><p>휴대폰 카메라로 찍어 입장하세요</p><img alt="입장 QR 코드"><div class="url"></div><small>클릭하거나 Q 키를 누르면 닫힙니다</small></div></div>
   <nav id="dock"></nav>
   <script src="/qrcode.js"></script>
   <script src="/ws-client.js"></script>

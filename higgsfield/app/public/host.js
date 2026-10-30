@@ -101,6 +101,8 @@
     const mq = $('#miniQr');
     mq.querySelector('img').src = qrSrc(url);
     mq.querySelector('span').textContent = url.replace(/^https?:\/\//, '');
+    $('#bigQr img').src = qrSrc(url);
+    $('#bigQr .url').textContent = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
     stageKey = '';
   }
 
@@ -155,6 +157,11 @@
     if (ok) { showReview = false; send('session:reset'); }
   }
 
+  // 오른쪽 위 작은 QR → 화면 가운데 큰 QR
+  function toggleBigQr() { $('#bigQr').classList.toggle('hidden'); }
+  $('#miniQr').addEventListener('click', toggleBigQr);
+  $('#bigQr').addEventListener('click', toggleBigQr);
+
   function toggleFull() {
     if (document.fullscreenElement) document.exitFullscreen();
     else document.documentElement.requestFullscreen?.();
@@ -168,6 +175,8 @@
     else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); ph.back && ph.back(v); }
     else if (e.key === 'h' || e.key === 'H') { dockMin = !dockMin; dockKey = ''; render(); }
     else if (e.key === 'f' || e.key === 'F') toggleFull();
+    else if (e.key === 'q' || e.key === 'Q' || e.key === 'ㅂ') toggleBigQr();
+    else if (e.key === 'Escape') $('#bigQr').classList.add('hidden');
   });
 
   // 타이머 (data-ends: 종료 시각, data-dur: 전체 길이)
